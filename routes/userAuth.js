@@ -51,7 +51,8 @@ router.post("/api/user/createUser", async(req,res) =>{
     {
         const savedUser = await user.save();
         const token = jwt.sign({_id: savedUser._id},process.env.TOKEN_SECRET);
-        res.send({error:false,message:token});
+        res.cookie(`authCookie`,token,{ maxAge: 900000, httpOnly: true });
+        res.send({error:false,message:""});
     }
     catch(error)
     {
@@ -71,7 +72,14 @@ router.post("/api/user/loginUser",async(req,res)=>
     if(!validPass) return res.status(400).send({error:true , message: "email or pass is incorrect"});
 
     const token = jwt.sign({_id: emailExist._id},process.env.TOKEN_SECRET);
-    res.header("auth-token",token).send({error:false, message:token});
+    res.cookie(`authCookie`,token,{ maxAge: 900000, httpOnly: true });
+    res.header("auth-token",token).send({error:false, message:""});
+})
+
+router.get("/api/user/logOut",async(req,res)=>
+{
+    res.clearCookie("authCookie");
+    res.send({})
 })
 
 router.get("/api/user/accountDetails",verifyUserToken, async(req,res) =>

@@ -1,7 +1,8 @@
 let userData; 
+
 const init = () =>
 {
-    let accessToken = localStorage.getItem("access-token");
+
     // if(!accessToken)
     // {
     //     document.getElementById("loading").style.display = "none";
@@ -13,15 +14,11 @@ const init = () =>
         mode: "cors",
         headers: {
             'Content-Type': 'application/json',
-            "auth-token":accessToken
         }
     }).then(data => data.json())
     .then(res => {
-        if(res.error)
-        {
-            localStorage.removeItem("access-token");
-        }
-        else 
+        
+        if(!res.error) 
         {
             userData = res.body;
             document.getElementById("noLogin").style.display = "none";
@@ -33,8 +30,16 @@ const init = () =>
 
 const logout = () =>
 {
-    localStorage.removeItem("access-token");
-    window.location.href = "/"
+    fetch("http://localhost:3000/api/user/logOut",{
+        method:"GET",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(data => data.json())
+    .then(res => {
+        window.location.href = "/";
+    })    
 }
 
 const userInfo = () => 
@@ -85,9 +90,8 @@ const login = () =>
         }
         else 
         {
-            if(localStorage.getItem("access-token")) localStorage.removeItem("access-token")
-            localStorage.setItem("access-token",res.message);
-            window.location.replace("/");
+            
+            window.location.replace("/auth/viewPet/");
         }
         console.log(res)
     });

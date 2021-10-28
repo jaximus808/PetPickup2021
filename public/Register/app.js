@@ -30,7 +30,7 @@ const Register = () =>
         {
             if(localStorage.getItem("access-token")) localStorage.removeItem("access-token")
             localStorage.setItem("access-token",res.message);
-            window.location.replace("/");
+            window.location.replace("/auth/viewPet/");
         }
     });
 }

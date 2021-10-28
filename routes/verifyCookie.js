@@ -1,19 +1,20 @@
 const jwt = require("jsonwebtoken");
+const path = require("path")
 
 module.exports = function auth(req,res,next)
 {
     const token = req.cookies.authCookie;
-    console.log("balls!")
+    
     console.log(token)
-    if(!token) return res.status(401).send({error:"true", message:"Invalid Token"});
+    if(!token) return res.sendFile(path.join(__dirname,"../", "public", "test", "bad.html"));
     try
     {
         const verified = jwt.verify(token, process.env.TOKEN_SECRET);
-        req.user=verified;
+        console.log("run bruh")
         next();
     }
     catch (err)
     {
-        res.status(400).send({error:true, message:"Invalid Token"});
+        res.sendFile(path.join(__dirname,"../", "public", "test", "bad.html"));
     }
 }
