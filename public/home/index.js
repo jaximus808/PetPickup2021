@@ -91,7 +91,7 @@ const login = () =>
         else 
         {
             
-            window.location.replace("/auth/viewPet/");
+            window.location.href = "/auth/viewPet/";
         }
         console.log(res)
     });

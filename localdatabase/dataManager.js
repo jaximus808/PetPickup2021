@@ -1,11 +1,15 @@
-module.exports = () =>
+module.exports = class 
 {
-    const fs = require("fs");
-    const date = new Date();
-    const crypto = require("crypto");
+    constructor()
+    {
+        this.fs = require("fs");
+        this.date = new Date();
+        this.crypto = require("crypto");
+        this.socket;
+    }
     
 
-    function RegisterPet(name, owner, species, phoneNumber)
+    RegisterPet (name, owner, species, phoneNumber)
     {
         this.fs.readFile("./pets.json", (err, data) =>
         {

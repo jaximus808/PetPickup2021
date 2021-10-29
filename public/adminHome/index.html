@@ -1,1 +1,20 @@
-<h1>Authorized!</h1>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Authorized!</h1>
+        <div id="petDisplay">
+    
+        </div>
+        <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
+        <script>
+            const socket = io();
+            
+            socket.on("renderInitData", (data) =>
+            {
+                console.log(data);
+            })
+        </script>
+    </body>
+</html>

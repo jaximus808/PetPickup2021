@@ -14,7 +14,7 @@ const socketio = require("socket.io");
 const server = http.createServer(app);
 const io = socketio(server)
 
-require("./routes/sockets/petviews")(io);
+
 
 app.use(cookieParser());
 
@@ -34,10 +34,11 @@ app.use(express.urlencoded({
     extended:false
 }));
 const userAuth = require("./routes/userAuth");
-const petAuth = require("./routes/petHandlingRoute");
-
+const {router, petdata} = require("./routes/petHandlingRoute");
+petdata.socket = "3";
+require("./routes/sockets/petviews")(io,petdata);
 app.use("/",userAuth);
-app.use("/",petAuth);
+app.use("/",router);
 
 
 app.use("/",express.static(path.join(__dirname,"public","home")));
