@@ -2,30 +2,39 @@ module.exports = class
 {
     constructor()
     {
-        this.fs = require("fs");
+        this.fs = require("fs").promises;
         this.date = new Date();
         this.crypto = require("crypto");
         this.socket;
     }
     
 
-    RegisterPet (name, owner, species, phoneNumber)
+    async RegisterPet (name, owner, species, phoneNumber)
     {
-        this.fs.readFile("./pets.json", (err, data) =>
+        console.log("HELLOW??")
+        const id = this.crypto.randomBytes(16).toString("hex");
+        let newPet;
+        await this.fs.readFile("./localdatabase/pets.json").then(data =>
         {
-            if(err)
-            {
-                return false;
-            }
+            
             let petData = JSON.parse(data);
             
-            petData[crypto.randomBytes(16).toString("hex")] = {
+            petData[id] = {
                 name: name,
                 owner: owner,
                 species: species,
-                phoneNumber: phoneNumber
+                phoneNumber: phoneNumber,
+                days: 30,
+                comments: ""
             }
-            this.fs.writeFileSync("./pets.json", JSON.stringify(petData, null, 2));
+            newPet = petData[id];
+            console.log("?")
+            console.log(newPet)
+            //console.log(petData)
+            this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2));
+            
+            
         })
+        return [id,newPet];
     }
 }

@@ -1,5 +1,18 @@
 {
-    "nuts": {
-        "cock":"lol"
-    }
+  "e1d8c6520bb5af486fc71958db26b23b": {
+    "name": "Mark",
+    "owner": "Nolan",
+    "species": "Puppy",
+    "phoneNumber": "808112872",
+    "days": 30,
+    "comments": ""
+  },
+  "44116e1f08bb5fd06c6388f9108fd823": {
+    "name": "Scout",
+    "owner": "jaxon",
+    "species": "Dog",
+    "phoneNumber": "9092321122",
+    "days": 30,
+    "comments": ""
+  }
 }

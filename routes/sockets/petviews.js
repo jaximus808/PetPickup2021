@@ -16,5 +16,12 @@ module.exports = (io, petdata) =>
             socket.emit("renderInitData", JSON.parse(data))
         })
         
+        socket.on("addPetData", async (data) =>
+        {
+            const newPetData = await petdata.RegisterPet(data.petName, data.ownerName,data.species,data.phoneNumber)
+            console.log(newPetData[1])
+            socket.emit("renderNewPet", newPetData[1],newPetData[0] )
+        })
+        
     })
 }

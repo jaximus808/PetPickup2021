@@ -1,20 +1,137 @@
 <html>
     <head>
+        <style>
+            
 
+            .PetContainer
+            {
+                
+                height: 180px;
+                width: calc(100%-5px);
+                background-color: lightgray;
+                margin-bottom: 1rem;
+                padding-left: 5px;
+            }
+            .petDisplay
+            {
+                width: 90%;
+                position: absolute;
+                top:20%;
+                left:50%;
+                transform: translate(-50%,-50%);
+                
+            }
+
+            
+        </style>
     </head>
     <body>
-        <h1>Authorized!</h1>
-        <div id="petDisplay">
-    
+        <h1>Admin Test View Page</h1>
+        <button style="position: absolute; right:10px; top:10px;"onclick="AddPetPrompt()">Add Pet</button>
+        <div id="petAdderContainer" style="display: none;">
+            <label name="PetName">Pet Name: </label>
+            <input autocomplete="off"id="petName"name="PetName">
+
+            <p style="font-size: 5px;"></p>
+            <label name="ownerName">Owner Name: </label>
+            <input autocomplete="off"id="ownerName" name="ownerName">
+
+            <p style="font-size: 5px;"></p>
+            <label name="speciesName">Species: </label>
+            <input autocomplete="off"id="speciesName" name="speciesName">
+
+            <p style="font-size: 5px;"></p>
+            <label name="ownerNum">Owner's Phone Number: </label>
+            <input autocomplete="off"id="ownerNum" name="ownerNum">
+            
+            <p style="font-size: 10px;" id="status"></p>
+            <button class="loginBut" onclick="AddPet()">Add Pet</button>
         </div>
+        <h2>Currently Quarentined Pets:</h2>
+        <div id="petDisplay">
+
+        </div>
+
         <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
         <script>
             const socket = io();
-            
+
+
+            const AddPetPrompt = () =>
+            {
+                if(document.getElementById("petAdderContainer").style.display == "none")
+                {
+                    document.getElementById("petAdderContainer").style.display = "inline";
+
+                }
+                else 
+                {
+                    document.getElementById("petAdderContainer").style.display = "none";
+                }
+            }
+
+            const AddPet = () =>
+            {
+                const newPetData = 
+                {    
+                    petName: document.getElementById("petName").value,
+                    ownerName: document.getElementById("ownerName").value,
+                    species: document.getElementById("speciesName").value,
+                    phoneNumber: document.getElementById("ownerNum").value
+                }
+
+                socket.emit("addPetData", newPetData)
+            }
+
+            socket.on("renderNewPet", (data,id) =>
+            {
+                CreatePetProp(data.name,data.species, data.owner, id, data.days,data.comments,data.phoneNumber )
+            })
+
             socket.on("renderInitData", (data) =>
             {
-                console.log(data);
+                let keys = Object.keys(data)
+                for(let i = 0; i < keys.length; i++)
+                {
+                    let id = keys[i]
+                    CreatePetProp(data[id].name,data[id].species, data[id].owner, id, data[id].days,data[id].comments,data[id].phoneNumber )
+                }
+                
             })
+
+            const CreatePetProp = (_name, _species, _owner, id, _days, _comments,_phoneNumber) => 
+            {
+                let node = document.getElementById("petDisplay");
+                let petCharacter = document.createElement("div");
+                petCharacter.setAttribute("id", id);
+                let title = document.createElement("p");
+                title.setAttribute("class", "PetTitle")
+                petCharacter.setAttribute("class", "PetContainer")
+                let owner = document.createElement("p");
+                owner.innerText = "Owner name: " + _owner; 
+                title.innerText = "Pet name: "+_name;
+                let days = document.createElement("p");
+                days.innerText = "Days: " + _days; 
+                let species = document.createElement("p");
+                species.innerText = "species: "+_species;
+                let comments = document.createElement("p");
+                comments.innerText = "Comments: "+_comments;
+                let phoneNum = document.createElement("p");
+                phoneNum.innerText = "Client Phone Number: "+_phoneNumber;
+                
+
+                petCharacter.appendChild(title);
+                petCharacter.appendChild(owner);
+                petCharacter.appendChild(species);
+                petCharacter.appendChild(phoneNum)
+                petCharacter.appendChild(days)
+                
+                node.appendChild(petCharacter)
+                
+                // "newVal"
+                
+
+            }
         </script>
     </body>
 </html>
