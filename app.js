@@ -35,7 +35,7 @@ app.use(express.urlencoded({
 }));
 const userAuth = require("./routes/userAuth");
 const {router, petdata} = require("./routes/petHandlingRoute");
-petdata.socket = "3";
+
 require("./routes/sockets/petviews")(io,petdata);
 app.use("/",userAuth);
 app.use("/",router);

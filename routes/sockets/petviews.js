@@ -6,6 +6,7 @@ module.exports = (io, petdata) =>
     {
         petdata.socket = socket;
         console.log("sup")
+        //okay change this to nedb asap so buggy
         fs.readFile(path.join(__dirname, "../","../","/localdatabase/pets.json"), (err, data) =>
         {
             if(err)

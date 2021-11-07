@@ -6,15 +6,19 @@ module.exports = class
         this.date = new Date();
         this.crypto = require("crypto");
         this.socket;
+        this.balls = 5;
         this.bree = require("bree")
         this.currentJobs = {};
-        this.axios = require("axios").default
+        this.twillio = require("twilio")(process.env.TWILLIO_SID,process.env.TWILLIO_TOKEN);
+        this.cabin = require("cabin")
     }
     
-    CreatePetJob(id)
+    CreatePetJob(_id)
     {
         console.log("uwu!!!")
-        this.currentJobs[id] = new this.bree({
+        this.currentJobs[_id] = new this.bree({
+            
+            //logger : new this.cabin(),
             jobs: [
                 // { might not need cuz prone to problems anyway
                 //     name:"test",
@@ -23,22 +27,40 @@ module.exports = class
                 //         message: "hello:D"
                 //     }
                 // },
-                {
+                // { actual use
+                //     //interval: 'at 12:00 am' EZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+                //     name:"timerUpdate",
+                //     interval: 'at 12:00 am',
+                //     worker:
+                //     {
+                //         id:id,
+                //     }
+                // }
+                { //test
                     //interval: 'at 12:00 am' EZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                     name:"timerUpdate",
-                    interval: 'at 12:00 am',
-                    worker:
-                    {
-                        id:id,
-                        dataMan: this
-                    }
-                }
+                    interval: '5s',
+                    worker: {
+                        workerData: {
+                          id:_id,
+                          
+                        }
+                      }
+                },
+                
+                
                 //have an interval to update database json file
 
 
-            ]
+            ],
+            workerMessageHandler: (name,message)=>
+                {
+                    //IT WROKS LETS GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+                    console.log(this.balls)
+                    this.currentJobs[_id].stop()
+                }
         })
-        this.currentJobs[id].start()
+        this.currentJobs[_id].start()
     }
 
     async RegisterPet (name, owner, species, phoneNumber)
@@ -63,6 +85,8 @@ module.exports = class
                 }
                 else if(c != "(" || c != ")" || c != " ")
                 {
+
+                    //this is so bullshit btw
                     console.log("error")
                     pass = false;
                     this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2));
@@ -78,34 +102,14 @@ module.exports = class
             //     this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2));
             //     return;
             // })
-
-            var options = {
-                
-            }
-            const content =  
+            this.twillio.messages.create(
             {
-                url:'https://rest-api.d7networks.com/secure/send',
-                method: 'POST', 
-                headers:
-                {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': 'Basic c2p6YzkwNzM6dXpnN2dnSk0='
-                },
-                data: JSON.stringify({
-                    coding: '8',
-                    from: 'SMSInfo',
-                    'hex-content': '48454c4c4f',
-                    to:"+1"+ modifiedNum
-                })
-            };
-
-            this.axios.request(content).then(res =>
-                {
-                    console.log(res.data)
-                }).catch((err) =>
-                {
-                    console.error(err)
-                })
+                body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link:`,  
+                messagingServiceSid: 'MG4c11b874413623e6ebae243bb9ab7d0b',      
+                to: '+1'+phoneNumber 
+            }).then(message => {
+                console.log(message)
+            }).done()
             
             if(!pass) return
             petData[id] = {
@@ -113,7 +117,7 @@ module.exports = class
                 owner: owner,
                 species: species,
                 phoneNumber: modifiedNum,
-                days: 30,
+                days: 4,
                 comments: ""
             }
             newPet = petData[id];
