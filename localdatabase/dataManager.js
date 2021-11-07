@@ -105,7 +105,7 @@ module.exports = class
             this.twillio.messages.create(
             {
                 body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link:`,  
-                messagingServiceSid: 'MG4c11b874413623e6ebae243bb9ab7d0b',      
+                messagingServiceSid: process.env.MESSAGING_SID,      
                 to: '+1'+phoneNumber 
             }).then(message => {
                 console.log(message)

@@ -35,7 +35,7 @@ function sendTextprevMessage(phoneNumber,_id)
     twillio.messages.create(
         {
             body: 'your pet will be ready for pickup tomorrow!',  
-            messagingServiceSid: 'MG4c11b874413623e6ebae243bb9ab7d0b',      
+            messagingServiceSid: process.env.MESSAGING_SID,      
             to: '+1'+phoneNumber 
         }).then(message => {
             console.log(message)
@@ -47,7 +47,7 @@ function sendTextmessage(phoneNumber,_id)
     twillio.messages.create(
         {
             body: 'Your pet is ready!',  
-            messagingServiceSid: 'MG4c11b874413623e6ebae243bb9ab7d0b',      
+            messagingServiceSid: process.env.MESSAGING_SID,      
             to: '+1'+phoneNumber 
         }).then(message => {
             console.log(message)
