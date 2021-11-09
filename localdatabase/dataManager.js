@@ -1,5 +1,3 @@
-const { petdata } = require("../routes/petHandlingRoute");
-
 module.exports = class 
 {
     constructor()
