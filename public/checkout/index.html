@@ -1,0 +1,27 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>Make sure to not come up until we have your pet ready to avoid covid</h1>
+        <button onclick="AlertHere()">notify you are here</button>
+        <p id="res"></p>
+        <script>
+            function AlertHere()
+            {
+                let id = window.location.href.split("/")
+                fetch("http://localhost:3000/api/pet/claim",{
+                method:"GET",
+                mode: "cors",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "PetId":id[id.length-2]
+                }
+                }).then(data => data.json())
+                .then(res => {
+                    document.getElementById('res').innerHTML = res.message
+                }).catch(e =>{console.log(e)})
+            }
+        </script>
+    </body>
+</html>

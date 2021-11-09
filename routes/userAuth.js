@@ -94,4 +94,8 @@ router.get("/api/user/accountDetails",verifyUserToken, async(req,res) =>
         res.send({error:true,message:"Something went wrong"})
     }
 })
+
+
+
+
 module.exports = router;

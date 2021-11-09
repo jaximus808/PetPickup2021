@@ -2,9 +2,10 @@ module.exports = (io, petdata) =>
 {
     const fs = require("fs")
     const path = require('path')
+    petdata.io = io; 
     io.on("connection", (socket)=>
     {
-        petdata.socket = socket;
+        
         console.log("sup")
         //okay change this to nedb asap so buggy
         fs.readFile(path.join(__dirname, "../","../","/localdatabase/pets.json"), (err, data) =>
@@ -17,6 +18,11 @@ module.exports = (io, petdata) =>
             socket.emit("renderInitData", JSON.parse(data))
         })
         
+        socket.on("PetReadyForPick", (_id) =>
+        {
+            petdata.PetReady(_id)
+        })
+
         socket.on("addPetData", async (data) =>
         {
             const newPetData = await petdata.RegisterPet(data.petName, data.ownerName,data.species,data.phoneNumber)

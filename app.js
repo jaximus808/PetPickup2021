@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
   }
+const fs = require("fs").promises
 const bodyParser = require("body-parser");
 const express = require("express");
 const app = express();
@@ -46,6 +47,36 @@ app.use("/user/register",express.static(path.join(__dirname,"public","register")
 
 //authentication
 app.use("/auth/viewPet",verifyCookieToken, express.static(path.join(__dirname,"public","adminHome")))
+
+app.use("/checkout/id/:id",async (req, res,next) =>
+{
+    const id = req.params.id;
+    await fs.readFile(path.join(__dirname, "localdatabase", "pets.json")).then(async(data) => 
+    {
+        const petData = JSON.parse(data);
+        if(petData.hasOwnProperty(id))
+        {
+            if(petData[id].days > 0)
+            {
+                res.redirect("/");
+                return;
+            }
+        }
+        else 
+        {
+            res.redirect("/");
+            return;
+        }
+        
+        
+
+    })
+    
+    console.log("nice")
+    next();
+    
+},
+express.static(path.join(__dirname,"public/checkout")))
 
 
 server.listen(3000,()=>console.log("Server up"));
