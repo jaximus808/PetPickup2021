@@ -250,7 +250,7 @@ module.exports = class
                 owner: owner,
                 species: species,
                 phoneNumber: modifiedNum,
-                days: 0,
+                days: 3,
                 comments: "",
                 arrival:false,
                 complete:false
