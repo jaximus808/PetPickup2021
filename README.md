@@ -1,6 +1,6 @@
 # PetPickup2021
 
-This project is for the 2021 HACC.
+This project is for the 2021 HACC created by team jr_bytes
 
 This project's main goal is to speed up the process of quarentining pets and allows automatic messaging of pet's status. 
 
