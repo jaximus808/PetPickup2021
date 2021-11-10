@@ -8,4 +8,4 @@ Our demo is at: https://808petquarentine.azurewebsites.net/
 
 Video demo: https://www.youtube.com/watch?v=1_xUIxu93yw
 
-Admin credentials will only be given to judges
+Admin credentials will only be given to judges for testing
