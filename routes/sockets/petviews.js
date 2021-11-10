@@ -25,7 +25,8 @@ module.exports = (io, petdata) =>
 
         socket.on("addPetData", async (data) =>
         {
-            const newPetData = await petdata.RegisterPet(data.petName, data.ownerName,data.species,data.phoneNumber)
+            if(parseInt(data.dayLen) < 0) return;
+            const newPetData = await petdata.RegisterPet(data.petName, data.ownerName,data.species,data.phoneNumber,data.days,data.dayLen)
             console.log(newPetData[1])
             socket.emit("renderNewPet", newPetData[1],newPetData[0] )
         })

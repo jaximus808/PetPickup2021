@@ -47,7 +47,7 @@ module.exports = class
 
         })
     }
-    CreatePetJob(_id)
+    CreateTestPetJob(_id,dayLen)
     {
         console.log("uwu!!!")
         this.currentJobs[_id] = new this.bree({
@@ -73,7 +73,7 @@ module.exports = class
                 { //create a test method to show off actual features then a production method where it does the actual 30 days,maybe specify days?
                     //interval: 'at 12:00 am' EZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                     name:"timerUpdate",
-                    interval: '2m',
+                    interval: dayLen,
                     worker: {
                         workerData: {
                           id:_id,
@@ -81,6 +81,91 @@ module.exports = class
                         }
                       }
                 },
+                
+                
+                //have an interval to update database json file
+
+
+            ],
+            workerMessageHandler: async(name,message)=>
+                {
+                    //IT WROKS LETS GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+                    this.fs.readFile("./localdatabase/pets.json","utf-8").then(async (data) =>
+                    {
+        
+                        let petData = JSON.parse(data);
+                        
+                        console.log(petData[_id].days)
+                        petData[_id].days -= 1;
+                        this.io.emit("updateDays", {id: _id, days:petData[_id].days })
+                        if(petData[_id].days == 0)
+                        {
+                            this.sendTextmessage(petData[_id].phoneNumber, _id)
+                        }
+                        else if(petData[_id].days == 1)
+                        {
+                            this.sendTextprevMessage(petData[_id].phoneNumber, _id)
+                        }
+                        else if(petData[_id].days == -1)
+                        {
+                            this.currentJobs[_id].stop()
+                            //delete json object of pet data
+                            await this.TempUser.deleteOne({petId:_id}).then()
+                            {
+                                console.log("data deleted")
+                            }
+                            delete petData[_id]
+                            //send to the client to delete using socket
+                        }
+                        
+                        this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2),(err,data) => {});
+        
+        
+                    })
+                    // if(this.pending[_id] == 1)
+                    // {
+                    //     //dont cancel yet
+                    //     this.pending[_id] = 0; 
+                    //     console.log("nice")
+                    // }
+                    // else 
+                    // {
+                    //     console.log("cock")
+                        
+                    // }
+                    
+                    
+                }
+        })
+        this.currentJobs[_id].start()
+    }
+    CreatePetJob(_id)
+    {
+        console.log("uwu!!!")
+        this.currentJobs[_id] = new this.bree({
+            
+            //logger : new this.cabin(),
+            jobs: [
+                // { might not need cuz prone to problems anyway
+                //     name:"test",
+                //     timeout:"60s",
+                //     worker:{
+                //         message: "hello:D"
+                //     }
+                // },
+                {
+                    //interval: 'at 12:00 am' EZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+                    name:"timerUpdate",
+                    interval: 'at 12:00 am',
+                    worker: {
+                        workerData: {
+                          id:_id,
+                          
+                        }
+                      }
+                },
+                
                 
                 
                 //have an interval to update database json file
@@ -111,6 +196,7 @@ module.exports = class
                         {
                             this.currentJobs[_id].stop()
                             //delete json object of pet data
+                            this.TempUser.deleteOne({petId:_id})
                             delete petData[_id]
                             //send to the client to delete using socket
                         }
@@ -143,7 +229,7 @@ module.exports = class
         {
             this.twillio.messages.create(
                 {
-                    body: 'Your pet is ready!',  
+                    body: `Your pet is ready! Go to this link to notify us that you are here.  ${process.env.URL_HOST+"/checkout/id/" +_id}`,  
                     messagingServiceSid: process.env.MESSAGING_SID,      
                     to: '+1'+phoneNumber 
                 }).then(message => {
@@ -200,7 +286,7 @@ module.exports = class
             
         })
     }
-    async RegisterPet (name, owner, species, phoneNumber)
+    async RegisterPet (name, owner, species, phoneNumber, days, dayLen)
     {
         console.log("HELLOW??")
         const tempid = this.crypto.randomBytes(3).toString("hex");
@@ -254,7 +340,7 @@ module.exports = class
 
             this.twillio.messages.create(
             {
-                body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link: __. \nuse user: ${tempName} and pass: ${tempid}`,  
+                body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link: ${process.env.URL_HOST} \nuse user: ${tempName} and pass: ${tempid}`,  
                 messagingServiceSid: process.env.MESSAGING_SID,      
                 to: '+1'+phoneNumber 
             }).then(message => {
@@ -267,7 +353,7 @@ module.exports = class
                 owner: owner,
                 species: species,
                 phoneNumber: modifiedNum,
-                days: 4,
+                days: days,
                 comments: "",
                 arrival:false,
                 complete:false
@@ -275,7 +361,15 @@ module.exports = class
             newPet = petData[id];
             //console.log(petData)
             this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2));
-            this.CreatePetJob(id)
+            if(dayLen == "false")
+            {
+                this.CreatePetJob(id)
+            }
+            else 
+            {
+                this.CreateTestPetJob(id, dayLen)
+            }
+            
             
         })
         return [id,newPet];

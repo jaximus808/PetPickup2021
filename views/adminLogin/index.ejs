@@ -1,0 +1,46 @@
+<html>
+    <title>Admin Login</title>
+    <body>
+        <h1>Admin Login:</h1>
+        <input autocomplete="off" type = "text" id="email" placeholder = "email">
+        <br>
+        <input type = "password" id="password" placeholder = "password">
+        <br>
+        <button onclick = "login()">Submit</button>
+        <br>
+        <a href="/">back</a>
+        <p id="status" style="color: red;"></p>
+        
+    </body>
+    <script>
+        const login = () =>
+{
+    const data = {
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    }
+    
+    fetch(location.protocol +"//" + window.location.host +"/api/user/loginUser", {
+        method:"POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(data => data.json())
+    .then(res => {
+
+        if(res.error) 
+        {
+            document.getElementById("status").innerHTML=`status: ${res.message}`
+        }
+        else 
+        {
+            
+            window.location.href = "/auth/viewPet/";
+        }
+        console.log(res)
+    });
+}
+    </script>
+</html>

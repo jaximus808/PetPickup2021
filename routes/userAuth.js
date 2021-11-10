@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyUserToken = require("./userTokenVerify")
 const { registerValidation, loginValidation, tempLoginValidation} = require("./validation");
+const { validateRequest } = require("twilio/lib/webhooks/webhooks");
 
 router.post("/api/user/createUser", async(req,res) =>{
     let unmodifiedNum = req.body.phone;
@@ -64,7 +65,6 @@ router.post("/api/user/createUser", async(req,res) =>{
 
 router.post("/api/checkpet/login", async(req,res) =>
 {
-    let pass = req.body.password; 
     const {error} = tempLoginValidation(req.body);
     if(error) return res.status(400).send({error:true});
     console.log("balls")
@@ -84,9 +84,12 @@ router.post("/api/user/loginUser",async(req,res)=>
     const {error} = loginValidation(req.body);
     if(error) return res.status(400).send({error:true,message:error.details[0].message});
 
-    const emailExist = await User.findOne({email: req.body.email});
-    if(!emailExist) return res.status(400).send({error:true , message: "email or pass is incorrect"});
-
+    var emailExist = await User.findOne({email: req.body.email});
+    if(!emailExist) 
+    {
+        emailExist = await User.findOne({username: req.body.email});
+        if(!emailExist) return res.status(400).send({error:true , message: "email or pass is incorrect"});
+    }
     const validPass = await bcrypt.compare(req.body.password,emailExist.password);
     if(!validPass) return res.status(400).send({error:true , message: "email or pass is incorrect"});
 

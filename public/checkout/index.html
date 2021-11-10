@@ -10,7 +10,7 @@
             function AlertHere()
             {
                 let id = window.location.href.split("/")
-                fetch("http://localhost:3000/api/pet/claim",{
+                fetch(location.protocol +"//" + window.location.host +"/api/pet/claim",{
                 method:"GET",
                 mode: "cors",
                 headers: {

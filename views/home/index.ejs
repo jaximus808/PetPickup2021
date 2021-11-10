@@ -1,1 +1,164 @@
-COCk
+<html>
+    <title>808PetQuarentine</title>
+    <style>
+        body{
+            background-color: lightgrey;
+            overflow-x: hidden;
+            margin:0;
+        }
+        input::-webkit-outer-spin-button,input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0; 
+        }  
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        #welcome{
+            font-size:10vw;
+            color:white;
+            margin:0;
+            position:absolute;
+            top:10%;
+            left:50%;
+            transform: translate(-50%,0);
+
+        }
+        #subtext
+        {
+            font-size:2vw;
+            color:white;
+            margin:0;
+            position:absolute;
+            top:60%;
+            left:50%;
+            white-space: nowrap;
+            transform: translate(-50%,0);
+
+        }
+        #greeting{
+            position:absolute;
+            width:100%;
+            height:100%;
+            z-index:-1;
+        }
+        .default{
+            border-radius:8%;
+            background-color:lightblue;
+            text-align:center;
+        }
+
+        #login{
+            width:25%;
+            height:45%;
+            position:absolute;
+            top:105%;
+            left:10%;
+            padding: 2%;
+            padding-top:10%;
+        }
+
+        #faq{
+            width:25%;
+            height:60%;
+            padding:1%;
+            position:absolute;
+            top:105%;
+            left:55%; 
+
+        }
+
+        #aea{
+            position:absolute;
+            top: 180%;
+            width: 90%;
+            height:15%;
+            left:5%;
+        }
+
+        #admin{
+            font-size:0.7vw;
+            
+        }
+        #backgroundFade
+        {
+            width:60%;
+            height:50%;
+            position:absolute;
+            top:15%;
+            left:50%;
+            transform: translate(-50%,0);
+            background-color: rgba(173,216,230,0.5);
+            border-radius: 20px;
+        }
+    </style>
+    <body>
+        <img src = "doggo.jpg" id = "greeting">
+        <div id="backgroundFade">
+            <p id = "welcome">Welcome!</p>
+            <p id="subtext">Scroll Down For Our Services</p>
+        </div>
+        
+        <div class = "default"  id = "login">
+            <h3>Check up on the status of your pet here:</h3>
+            <input  id="phoneNumber" placeholder = "User Name">
+            <br>
+            <input  id="petCodeCheck" placeholder = "Ticket Number">
+            <br>
+            <a href = "/admin/login" id = "admin">Administration Login</a>
+            <br>
+            <p id="statusss"></p>
+            <button onclick="PetCheck()"> Submit </a></button>
+        </div>
+
+        <div class = "default" id = "faq">
+            <h2>Frequently Asked Questions</h2>
+            <ol>
+                <li> When can I pick up my pet?</li>
+                <ol>In 30 days</ol>
+                <br>
+                <li>Question 2</li>
+            </ol>
+        </div>
+
+        <div class = "default"  id = "aea">
+            <h2>Announcements & Emergency Alerts</h2>
+            <p>This feature is currently work in progress</p>
+        </div>
+        <script>
+            let userData; 
+
+const PetCheck = () =>
+{
+    fetch(location.protocol +"//" + window.location.host +"/api/checkpet/login",{
+        method:"POST",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({password:document.getElementById("petCodeCheck").value, phoneNumber:document.getElementById("phoneNumber").value})
+    }).then(data => data.json())
+    .then(res => {
+        
+        if(res.error) 
+        {
+            document.getElementById("statusss").innerHTML="ERROR"
+        }
+        else 
+        {
+            window.location.href = "pet/petviews"
+        }
+    })
+}
+
+
+
+function RedirectRegister()
+{
+    window.location.href = "/user/register"
+}
+
+        </script>
+    </body>
+</html>

@@ -1,9 +1,25 @@
-function init()
-{
-    
-}
-
-const Register = () =>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <label name="username">Username</label>
+        <input autocomplete="off"name="username" id="username">
+        <p></p>
+        <label name="email">Email</label>
+        <input autocomplete="off"name="email"id="email">
+        <p></p>
+        +1 <label name="phoneNumber">Phone Number</label>
+        <input autocomplete="off"name="phoneNumber"id="phoneNumber">
+        <p></p>
+        <label name="password">Password</label>
+        <input type="password" name="password"id="password">
+        <p></p>
+        <button onclick="Register()" >Register</button>
+        <p></p>
+        <p id="status">status:</p>
+        <script > 
+            const Register = () =>
 {
     const data = {
         username: document.getElementById("username").value,
@@ -34,3 +50,6 @@ const Register = () =>
         }
     });
 }
+        </script>
+    </body>
+</html>

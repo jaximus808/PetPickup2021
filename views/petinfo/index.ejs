@@ -1,0 +1,44 @@
+<html>
+    <title>808PetQuarentine</title>
+    <style>
+        #box{
+            width:30%;
+            height:75%;
+            background-color: rgb(167, 149, 149);
+            position:absolute;
+            left:50%;
+            transform: translate(-50%,0);
+            padding: 5px;
+        }
+        body
+        {
+            background-image: url("doggo.jpg");
+            background-size: cover;
+        }
+    </style>
+    <body>
+        <div id = "box">
+            <p>Your pet's status is:</p>
+            <p id = "status"><%= message%></p>
+            <p id = "notes">Additional Notes: <%=comments %></p>
+            <p id = "name">Name: <%=name %></p>
+            <p id = "type">Type: <%=species %></p>
+            <p id = "ownerName">Owner name: <%=owner %></p>
+            <p id = "time">Days left: <%=days %></p>
+
+            <% if(days==0 && arrival == false)
+            {%>
+                <p>your pet Id:</p>
+                <p id = "petid"><%=id%></p>
+                <p>You can notify us that you're here by going to your text or clicking here:</p>
+                <button onclick="redirectUser()">Show me!</button>
+                <%}%>
+        </div>
+        <script>
+            function redirectUser()
+            {
+                window.location.href = "/checkout/id/" + document.getElementById("petid").innerHTML
+            }
+        </script>
+    </body>
+</html>

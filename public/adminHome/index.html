@@ -1,5 +1,6 @@
 <html>
     <head>
+        <title>Admin View</title>
         <style>
             
 
@@ -11,6 +12,7 @@
                 background-color: lightgray;
                 margin-bottom: 1rem;
                 padding-left: 5px;
+                
             }
             .petDisplay
             {
@@ -28,6 +30,7 @@
     <body>
         <h1>Admin Test View Page</h1>
         <button style="position: absolute; right:10px; top:10px;"onclick="AddPetPrompt()">Add Pet</button>
+        <button style="position: absolute; right:80px; top:10px;"onclick="logout()">Log Out</button>
         <div id="petAdderContainer" style="display: none;">
             <label name="PetName">Pet Name: </label>
             <input autocomplete="off"id="petName"name="PetName">
@@ -44,6 +47,20 @@
             <label name="ownerNum">Owner's Phone Number: </label>
             <input autocomplete="off"id="ownerNum" name="ownerNum">
             
+            <p style="font-size: 5px;"></p>
+            <label> Days Quarentined: </label>
+            <input id="daysSet" value="30" autocomplete="off">
+            <p style="font-size: 5px;"></p>
+            <label>Testing: </label>
+            <input autocomplete="off" id="testToggle"type="checkbox">
+            <div  style="display: none;" id="testingParams">
+                <p>This will allow for a day to last 30 seconds for testing the messaging api used by twillio. Or you could specifiy 2 days and make a day last 2 minutes to test the check out process.</p>
+                <p style="font-size: 5px;"></p>
+                <p> Day length (use m for minutes and s for seconds. Others will be rejected) example: 2m</p>
+                <br>
+                <input id="dayLength" type = "text" autocomplete="off">
+                
+            </div>
             <p style="font-size: 10px;" id="status"></p>
             <button class="loginBut" onclick="AddPet()">Add Pet</button>
         </div>
@@ -54,6 +71,25 @@
 
         <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
         <script>
+            document.getElementById("testToggle").addEventListener("change", ()=>
+            {
+                if(document.getElementById("testToggle").checked) document.getElementById("testingParams").style.display = "inline"
+                else document.getElementById("testingParams").style.display = "none"
+            })
+
+            const logout = () =>
+{
+    fetch(location.protocol +"//" + window.location.host +"/api/user/logOut",{
+        method:"GET",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }).then(data => data.json())
+    .then(res => {
+        window.location.href = "/";
+    })    
+}
             const socket = io();
 
 
@@ -72,12 +108,37 @@
 
             const AddPet = () =>
             {
+                //this check should be server side, do this later tho
+                var dayLength = "false"
+                if(document.getElementById("testToggle").checked)
+                {
+                    var dayLen = document.getElementById("dayLength").value;       
+                    
+                    console.log(dayLen)
+                    dayLen = dayLen.replace(/\s+/g, '')
+                    if(dayLen[dayLen.length-1] != "m" && dayLen[dayLen.length-1] != "s" )
+                    {
+                        document.getElementById("status").innerHTML = "Set a proper unit"
+                        return
+                    }
+                    if(isNaN(dayLen.substring(0,dayLen.length-1)))
+                    {
+                        
+                        document.getElementById("status").innerHTML = "Set a number"
+                        return
+                    }
+                    return
+                    dayLength = dayLen;
+                
+                }
                 const newPetData = 
                 {    
                     petName: document.getElementById("petName").value,
                     ownerName: document.getElementById("ownerName").value,
                     species: document.getElementById("speciesName").value,
-                    phoneNumber: document.getElementById("ownerNum").value
+                    phoneNumber: document.getElementById("ownerNum").value,
+                    days:document.getElementById("daysSet").value,
+                    dayLen: dayLength
                 }
 
                 socket.emit("addPetData", newPetData)
