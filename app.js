@@ -140,7 +140,7 @@ app.use("/checkout/id/:id",async (req, res,next) =>
 },
 express.static(path.join(__dirname,"public/checkout")))
 
-server.listen(3000,()=>console.log("Server up"));
+server.listen(process.env.PORT || 3000,()=>console.log("Server up"));
 
 //sockets
 

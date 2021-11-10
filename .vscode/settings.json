@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/85308ddc-5916-4f8b-aeae-61ec8d52e624/resourceGroups/DefaultResourceGroup-WUS/providers/Microsoft.Web/sites/808PetQuarentine",
+    "appService.deploySubpath": "."
+}
