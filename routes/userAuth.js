@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const User = require("./models/UserObject");
+const Temp = require("./models/TempObject");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const verifyUserToken = require("./userTokenVerify")
-const { registerValidation, loginValidation} = require("./validation");
+const { registerValidation, loginValidation, tempLoginValidation} = require("./validation");
 
 router.post("/api/user/createUser", async(req,res) =>{
     let unmodifiedNum = req.body.phone;
@@ -60,6 +61,24 @@ router.post("/api/user/createUser", async(req,res) =>{
         res.status(400).send({error:true , message: error.message});
     }
 })
+
+router.post("/api/checkpet/login", async(req,res) =>
+{
+    let pass = req.body.password; 
+    const {error} = tempLoginValidation(req.body);
+    if(error) return res.status(400).send({error:true});
+    console.log("balls")
+    const phoneLookUp = await Temp.findOne({phoneNumber: req.body.phoneNumber});
+    if(!phoneLookUp) return res.status(400).send({error:true});
+    const validPass = await bcrypt.compare(req.body.password, phoneLookUp.password);
+    if(!validPass) return res.status(400).send({error:true});
+    console.log("balls3")
+    const token = jwt.sign({_id: phoneLookUp._id},process.env.TOKEN_SECRET);
+    res.clearCookie("petAuthCookie");
+    res.cookie(`petAuthCookie`,token,{ maxAge: 9000000, httpOnly: true });
+    res.header("auth-token",token).send({error:false, message:""});
+})
+
 router.post("/api/user/loginUser",async(req,res)=>
 {
     const {error} = loginValidation(req.body);

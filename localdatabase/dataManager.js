@@ -2,6 +2,10 @@ module.exports = class
 {
     constructor()
     {
+
+        this.TempUser = require("../routes/models/TempObject");
+        this.bcrypt = require("bcrypt");
+        this.jwt = require("jsonwebtoken")
         this.fs = require("fs").promises;
         this.date = new Date();
         this.crypto = require("crypto");
@@ -66,10 +70,10 @@ module.exports = class
                 //         id:id,
                 //     }
                 // }
-                { //test
+                { //create a test method to show off actual features then a production method where it does the actual 30 days,maybe specify days?
                     //interval: 'at 12:00 am' EZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                     name:"timerUpdate",
-                    interval: '3m',
+                    interval: '2m',
                     worker: {
                         workerData: {
                           id:_id,
@@ -199,6 +203,8 @@ module.exports = class
     async RegisterPet (name, owner, species, phoneNumber)
     {
         console.log("HELLOW??")
+        const tempid = this.crypto.randomBytes(3).toString("hex");
+        const tempName = this.crypto.randomBytes(3).toString("hex");
         const id = this.crypto.randomBytes(16).toString("hex");
         let newPet;
         //if there is time use nedb instead
@@ -226,18 +232,29 @@ module.exports = class
                     return 
                 }
             }
-            console.log(modifiedNum);
-            // this.textbelt.sendText(modifiedNum, "Come back in 30 days to get your pet!",undefined, (err) =>
-            // {
-            //     console.log("fick")
-            //     console.log(err)
-            //     pass = false
-            //     this.fs.writeFile("./localdatabase/pets.json", JSON.stringify(petData, null, 2));
-            //     return;
-            // })
+            
+            console.log(tempid)
+            const salt = await this.bcrypt.genSalt(10);
+            const hashPassword = await this.bcrypt.hash(tempid,salt);
+        
+            const tempUser = new this.TempUser({
+                phoneNumber: tempName,
+                petId: id,
+                password: hashPassword,
+                
+            });
+            try
+            {
+                await tempUser.save();
+            }
+            catch(error)
+            {
+                console.log("errorRegistering")
+            }
+
             this.twillio.messages.create(
             {
-                body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link:`,  
+                body:  `your pet: ${name} has been successfully quarentined, be sure to come back in 30 days! you can check ur pet at this link: __. \nuse user: ${tempName} and pass: ${tempid}`,  
                 messagingServiceSid: process.env.MESSAGING_SID,      
                 to: '+1'+phoneNumber 
             }).then(message => {
@@ -250,7 +267,7 @@ module.exports = class
                 owner: owner,
                 species: species,
                 phoneNumber: modifiedNum,
-                days: 3,
+                days: 4,
                 comments: "",
                 arrival:false,
                 complete:false

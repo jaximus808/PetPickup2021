@@ -1,5 +1,28 @@
 let userData; 
 
+const PetCheck = () =>
+{
+    fetch("http://localhost:3000/api/checkpet/login",{
+        method:"POST",
+        mode: "cors",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({password:document.getElementById("petCodeCheck").value, phoneNumber:document.getElementById("phoneNumber").value})
+    }).then(data => data.json())
+    .then(res => {
+        
+        if(res.error) 
+        {
+            document.getElementById("statusss").innerHTML="ERROR"
+        }
+        else 
+        {
+            window.location.href = "pet/petviews"
+        }
+    })
+}
+
 const init = () =>
 {
 

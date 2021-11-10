@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
   }
+require
 const fs = require("fs").promises
 const bodyParser = require("body-parser");
 const express = require("express");
@@ -9,6 +10,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const verifyCookieToken = require("./routes/verifyCookie");
+const verifyPetCookieToken = require("./routes/verifyPetViewCook");
 const http = require("http")
 const socketio = require("socket.io");
 
@@ -25,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
-
+app.set('view engine', 'ejs');
 mongoose.connect(process.env.DB_CONNECT, {useNewUrlParser : true, useUnifiedTopology: true},()=>{
     console.log("Connected to db");
 })
@@ -47,6 +49,8 @@ app.use("/user/register",express.static(path.join(__dirname,"public","register")
 
 //authentication
 app.use("/auth/viewPet",verifyCookieToken, express.static(path.join(__dirname,"public","adminHome")))
+
+app.get("/pet/petviews", verifyPetCookieToken, (req,res) => res.render("home"))
 
 app.use("/checkout/id/:id",async (req, res,next) =>
 {
