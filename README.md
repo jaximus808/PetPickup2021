@@ -8,4 +8,6 @@ Our demo is at: https://808petquarentine.azurewebsites.net/
 
 Video demo: https://www.youtube.com/watch?v=1_xUIxu93yw
 
+Devpost: https://devpost.com/software/808petquarentine
+
 Admin credentials will only be given to judges for testing
